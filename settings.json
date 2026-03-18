@@ -1,0 +1,295 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit(.claude/approved-plans/**)",
+      "Read(*/*)",
+      "Write(*/*)",
+      "Edit(*/*)",
+      "Bash",
+      "WebFetch",
+      "WebSearch",
+      "Task",
+      "Glob",
+      "Grep",
+      "NotebookEdit",
+      "Bash(git pull:*)",
+      "Skill(*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf /*)",
+      "Bash(sudo rm -rf:*)",
+      "Bash(mkfs:*)",
+      "Bash(dd if=/dev/zero:*)",
+      "Bash(chmod -R 777 /)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/pre-push-check.js",
+            "statusMessage": "Checking git push..."
+          },
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/commit-guard.js",
+            "statusMessage": "Validating commit format..."
+          },
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/block-dev-server.js",
+            "statusMessage": "Checking dev server..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/secret-scanner.js",
+            "statusMessage": "Scanning for secrets..."
+          },
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/block-md-creation.js",
+            "statusMessage": "Checking .md creation..."
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/secret-scanner.js",
+            "statusMessage": "Scanning for secrets..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/stop-check.js",
+            "statusMessage": "Checking for pending tests..."
+          },
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/anti-rationalization.js",
+            "statusMessage": "Anti-rationalization check..."
+          },
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/session-end.js",
+            "statusMessage": "Saving session data..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/lint-fix.js",
+            "statusMessage": "Auto-fixing lint issues..."
+          },
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/suggest-compact.js",
+            "statusMessage": "Tracking edits..."
+          },
+          {
+            "type": "command",
+            "command": "node \"/Users/gabrielrubim/.claude/hooks/gsd-context-monitor.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/suggest-compact.js",
+            "statusMessage": "Tracking edits..."
+          },
+          {
+            "type": "command",
+            "command": "node \"/Users/gabrielrubim/.claude/hooks/gsd-context-monitor.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/webhook-notify.js",
+            "statusMessage": "Notifying webhook..."
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/notification-log.js",
+            "statusMessage": "Logging notification..."
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/pre-compact-save.js",
+            "statusMessage": "Saving state before compact..."
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/post-compact-restore.js",
+            "statusMessage": "Restoring context..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/scripts/context-health-monitor.js",
+            "statusMessage": "Monitoring context health..."
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/gabrielrubim/.claude/hooks/gsd-check-update.js\""
+          }
+        ]
+      }
+    ]
+  },
+  "outputStyle": "default",
+  "sandbox": {
+    "enabled": false
+  },
+  "alwaysThinkingEnabled": false,
+  "extraKnownMarketplaces": {
+    "jeffallan": {
+      "source": {
+        "source": "github",
+        "repo": "Jeffallan/claude-skills"
+      }
+    },
+    "trailofbits": {
+      "source": {
+        "source": "github",
+        "repo": "trailofbits/skills"
+      }
+    },
+    "planning-with-files": {
+      "source": {
+        "source": "github",
+        "repo": "OthmanAdi/planning-with-files"
+      }
+    },
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      }
+    },
+    "oh-my-claudecode": {
+      "source": {
+        "source": "github",
+        "repo": "Yeachan-Heo/oh-my-claudecode"
+      }
+    },
+    "anthropics-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "anthropics-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    },
+    "superpowers": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers-marketplace"
+      }
+    },
+    "claude-market": {
+      "source": {
+        "source": "github",
+        "repo": "claude-market/marketplace"
+      }
+    },
+    "voltagent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "VoltAgent/awesome-agent-skills"
+      }
+    },
+    "levnikolaevich": {
+      "source": {
+        "source": "github",
+        "repo": "levnikolaevich/claude-code-skills"
+      }
+    },
+    "alirezarezvani": {
+      "source": {
+        "source": "github",
+        "repo": "alirezarezvani/claude-skills"
+      }
+    },
+    "claude-command-suite": {
+      "source": {
+        "source": "github",
+        "repo": "qdhenry/Claude-Command-Suite"
+      }
+    },
+    "voltagent-subagents": {
+      "source": {
+        "source": "github",
+        "repo": "VoltAgent/awesome-claude-code-subagents"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "fullstack-dev-skills@jeffallan": true
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node \"/Users/gabrielrubim/.claude/hooks/gsd-statusline.js\""
+  }
+}

@@ -1,0 +1,18 @@
+# Secrets & credentials
+.env
+*.key
+*.pem
+credentials.json
+
+# Browser sessions (private)
+_opensquad/_browser_profile/
+
+# Memory (personal)
+_opensquad/_memory/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
